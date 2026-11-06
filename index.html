@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngularJS Form Validation and Routing</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f6fa;
+            color: #333;
+        }
+
+        header {
+            background: #176b87;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        nav {
+            background: #064663;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 18px;
+            display: inline-block;
+        }
+
+        nav a:hover {
+            background: #176b87;
+            border-radius: 5px;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 25px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #176b87;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 11px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="radio"] {
+            width: auto;
+        }
+
+        .gender label {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+        .error {
+            color: red;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+
+        button {
+            background: #176b87;
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 18px;
+        }
+
+        button:disabled {
+            background: gray;
+            cursor: not-allowed;
+        }
+
+        .card {
+            background: #e8f4f8;
+            padding: 18px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        footer {
+            background: #064663;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Portal</h1>
+        <p>AngularJS Form Validation and Routing</p>
+        <p>Name: DHANYA MYSIE | Register No: UTK24CS1002</p>
+    </header>
+
+    <nav>
+        <a href="#!/">Home</a>
+        <a href="#!/register">Registration</a>
+        <a href="#!/courses">Courses</a>
+        <a href="#!/contact">Contact</a>
+    </nav>
+
+    <div ng-view></div>
+
+    <footer>
+        <p>© 2026 Student Portal. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        var app = angular.module("myApp", ["ngRoute"]);
+
+        // AngularJS Routing
+        app.config(function($routeProvider) {
+            $routeProvider
+                .when("/", {
+                    templateUrl: "home.html"
+                })
+                .when("/register", {
+                    templateUrl: "register.html",
+                    controller: "RegisterController"
+                })
+                .when("/courses", {
+                    templateUrl: "courses.html"
+                })
+                .when("/contact", {
+                    templateUrl: "contact.html"
+                })
+                .otherwise({
+                    redirectTo: "/"
+                });
+        });
+
+        // Registration Form Controller
+        app.controller("RegisterController", function($scope) {
+            $scope.states = [
+                "Tamil Nadu",
+                "Kerala",
+                "Karnataka",
+                "Andhra Pradesh",
+                "Telangana"
+            ];
+
+            $scope.submitForm = function(form) {
+                if (form.$valid) {
+                    alert("Registration Successful!");
+                    form.$setPristine();
+                    form.$setUntouched();
+                    $scope.user = {};
+                }
+            };
+        });
+    </script>
+
+    <!-- HOME PAGE TEMPLATE -->
+    <script type="text/ng-template" id="home.html">
+        <div class="container">
+            <h2>Welcome to Student Portal</h2>
+            <p>Welcome to our Student Portal. This website provides information about student registration, courses and contact details.</p>
+
+            <div class="card">
+                <h3>Student Registration</h3>
+                <p>Register using the online registration form.</p>
+            </div>
+
+            <div class="card">
+                <h3>Available Courses</h3>
+                <p>Explore different courses and learning opportunities.</p>
+            </div>
+
+            <div class="card">
+                <h3>Student Support</h3>
+                <p>Contact us for assistance and information.</p>
+            </div>
+        </div>
+    </script>
+
+    <!-- REGISTRATION PAGE TEMPLATE -->
+    <script type="text/ng-template" id="register.html">
+        <div class="container">
+            <h2>User Registration Form</h2>
+
+            <form name="registrationForm"
+                  ng-submit="submitForm(registrationForm)"
+                  novalidate>
+
+                <label>Full Name</label>
+                <input type="text"
+                       name="name"
+                       ng-model="user.name"
+                       ng-pattern="/^[A-Za-z ]+$/"
+                       required>
+
+                <div class="error"
+                     ng-show="registrationForm.name.$touched && registrationForm.name.$error.required">
+                    Name is required.
+                </div>
+
+                <div class="error"
+                     ng-show="registrationForm.name.$touched && registrationForm.name.$error.pattern">
+                    Name should not contain numbers or special characters.
+                </div>
+
+                <label>Password</label>
+                <input type="password"
+                       name="password"
+                       ng-model="user.password"
+                       ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$/"
+                       required>
+
+                <div class="error"
+                     ng-show="registrationForm.password.$touched && registrationForm.password.$invalid">
+                    Password must contain uppercase, lowercase, number and minimum 8 characters.
+                </div>
+
+                <label>Age</label>
+                <input type="number"
+                       name="age"
+                       ng-model="user.age"
+                       min="18"
+                       max="30"
+                       required>
+
+                <div class="error"
+                     ng-show="registrationForm.age.$touched && registrationForm.age.$invalid">
+                    Age must be between 18 and 30.
+                </div>
+
+                <label>Mobile Number</label>
+                <input type="text"
+                       name="mobile"
+                       ng-model="user.mobile"
+                       ng-pattern="/^[0-9]{10}$/"
+                       required>
+
+                <div class="error"
+                     ng-show="registrationForm.mobile.$touched && registrationForm.mobile.$invalid">
+                    Mobile number must contain exactly 10 digits.
+                </div>
+
+                <label>Email Address</label>
+                <input type="email"
+                       name="email"
+                       ng-model="user.email"
+                       required>
+
+                <div class="error"
+                     ng-show="registrationForm.email.$touched && registrationForm.email.$invalid">
+                    Enter a valid email address.
+                </div>
+
+                <label>Gender</label>
+                <div class="gender">
+                    <label>
+                        <input type="radio"
+                               name="gender"
+                               ng-model="user.gender"
+                               value="Male"
+                               required> Male
+                    </label>
+
+                    <label>
+                        <input type="radio"
+                               name="gender"
+                               ng-model="user.gender"
+                               value="Female"
+                               required> Female
+                    </label>
+
+                    <label>
+                        <input type="radio"
+                               name="gender"
+                               ng-model="user.gender"
+                               value="Other"
+                               required> Other
+                    </label>
+                </div>
+
+                <div class="error"
+                     ng-show="registrationForm.gender.$touched && registrationForm.gender.$invalid">
+                    Please select your gender.
+                </div>
+
+                <label>State</label>
+                <select name="state"
+                        ng-model="user.state"
+                        ng-options="state for state in states"
+                        required>
+                    <option value="">Select State</option>
+                </select>
+
+                <div class="error"
+                     ng-show="registrationForm.state.$touched && registrationForm.state.$invalid">
+                    Please select your state.
+                </div>
+
+                <button type="submit"
+                        ng-disabled="registrationForm.$invalid">
+                    Submit Registration
+                </button>
+
+                <p class="success"
+                   ng-show="registrationForm.$valid">
+                    All fields are valid. You can submit the form.
+                </p>
+
+            </form>
+        </div>
+    </script>
+
+    <!-- COURSES PAGE TEMPLATE -->
+    <script type="text/ng-template" id="courses.html">
+        <div class="container">
+            <h2>Available Courses</h2>
+
+            <div class="card">
+                <h3>Computer Science</h3>
+                <p>Learn programming, algorithms and computer technologies.</p>
+            </div>
+
+            <div class="card">
+                <h3>Business Analytics</h3>
+                <p>Learn data analysis, visualization and business decision-making.</p>
+            </div>
+
+            <div class="card">
+                <h3>Cyber Security</h3>
+                <p>Learn network security, ethical hacking and data protection.</p>
+            </div>
+        </div>
+    </script>
+
+    <!-- CONTACT PAGE TEMPLATE -->
+    <script type="text/ng-template" id="contact.html">
+        <div class="container">
+            <h2>Contact Us</h2>
+
+            <p><strong>Student Portal Support</strong></p>
+            <p>Email: support@studentportal.com</p>
+            <p>Phone: 9876543210</p>
+            <p>Address: Coimbatore, Tamil Nadu, India</p>
+
+            <h3>Send a Message</h3>
+
+            <form name="contactForm" novalidate>
+                <label>Name</label>
+                <input type="text" ng-model="contactName" required>
+
+                <label>Email</label>
+                <input type="email" ng-model="contactEmail" required>
+
+                <label>Message</label>
+                <textarea ng-model="contactMessage" required></textarea>
+
+                <button type="button"
+                        ng-disabled="contactForm.$invalid"
+                        ng-click="messageSent=true">
+                    Send Message
+                </button>
+
+                <p class="success" ng-show="messageSent">
+                    Your message has been submitted successfully!
+                </p>
+            </form>
+        </div>
+    </script>
+
+</body>
+</html>
